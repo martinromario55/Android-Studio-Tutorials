@@ -17,4 +17,13 @@ class MainActivity : AppCompatActivity() {
             insets
         }
     }
+
+    override fun onPause() {
+        super.onPause()
+        println("onPause")
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+    }
 }
