@@ -3,6 +3,7 @@ package com.example.androidfundamentals
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -45,16 +46,22 @@ class MainActivity : AppCompatActivity() {
 //            tvCount.text = "Let's count together: $count"
 //        }
 
-        val btnAdd = findViewById<Button>(R.id.btnAdd)
-        val tvResult = findViewById<TextView>(R.id.tvResult)
-        val etNum1 = findViewById<EditText>(R.id.etFirstNum)
-        val etNum2 = findViewById<EditText>(R.id.etSecondNum)
+//        val btnAdd = findViewById<Button>(R.id.btnAdd)
+//        val tvResult = findViewById<TextView>(R.id.tvResult)
+//        val etNum1 = findViewById<EditText>(R.id.etFirstNum)
+//        val etNum2 = findViewById<EditText>(R.id.etSecondNum)
 
-        btnAdd.setOnClickListener {
-            val num1 = etNum1.text.toString().toIntOrNull() ?:0
-            val num2 = etNum2.text.toString().toIntOrNull() ?:0
-            val result = num1 + num2
-            tvResult.text = result.toString()
+//        btnAdd.setOnClickListener {
+//            val num1 = etNum1.text.toString().toIntOrNull() ?:0
+//            val num2 = etNum2.text.toString().toIntOrNull() ?:0
+//            val result = num1 + num2
+//            tvResult.text = result.toString()
+//        }
+
+        val btnAddImage = findViewById<Button>(R.id.btnAddImage)
+        val ivImage = findViewById<ImageView>(R.id.ivImage)
+        btnAddImage.setOnClickListener {
+            ivImage.setImageResource(R.drawable.puppy)
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
