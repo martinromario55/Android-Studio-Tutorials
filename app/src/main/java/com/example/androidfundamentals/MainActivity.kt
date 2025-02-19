@@ -1,6 +1,7 @@
 package com.example.androidfundamentals
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
@@ -8,8 +9,10 @@ import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintSet.Layout
 import androidx.constraintlayout.widget.Group
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -68,27 +71,41 @@ class MainActivity : AppCompatActivity() {
 //            ivImage.setImageResource(R.drawable.puppy)
 //        }
 
-        val btnOrder = findViewById<Button>(R.id.btnOrder)
-        val rgMeat = findViewById<RadioGroup>(R.id.rgMeat)
-        val cbCheese = findViewById<CheckBox>(R.id.cbCheese)
-        val cbOnions = findViewById<CheckBox>(R.id.cbOnions)
-        val cbSalads = findViewById<CheckBox>(R.id.cbSalads)
-        val tvOrder = findViewById<TextView>(R.id.tvOrder)
+//        val btnOrder = findViewById<Button>(R.id.btnOrder)
+//        val rgMeat = findViewById<RadioGroup>(R.id.rgMeat)
+//        val cbCheese = findViewById<CheckBox>(R.id.cbCheese)
+//        val cbOnions = findViewById<CheckBox>(R.id.cbOnions)
+//        val cbSalads = findViewById<CheckBox>(R.id.cbSalads)
+//        val tvOrder = findViewById<TextView>(R.id.tvOrder)
+//
+//        btnOrder.setOnClickListener {
+//            val checkedMeatRadioButtonId = rgMeat.checkedRadioButtonId
+//            val meat = findViewById<RadioButton>(checkedMeatRadioButtonId)
+//            val cheese = cbCheese.isChecked
+//            val onions = cbOnions.isChecked
+//            val salads = cbSalads.isChecked
+//
+//            val orderString = "You ordered a burger with: \n" +
+//                    "${meat.text}" +
+//                    (if(cheese) "\nCheese" else "") +
+//                    (if(onions) "\nOnions" else "") +
+//                    (if(salads) "\nSalads" else "")
+//
+//            tvOrder.text = orderString
+//        }
 
-        btnOrder.setOnClickListener {
-            val checkedMeatRadioButtonId = rgMeat.checkedRadioButtonId
-            val meat = findViewById<RadioButton>(checkedMeatRadioButtonId)
-            val cheese = cbCheese.isChecked
-            val onions = cbOnions.isChecked
-            val salads = cbSalads.isChecked
 
-            val orderString = "You ordered a burger with: \n" +
-                    "${meat.text}" +
-                    (if(cheese) "\nCheese" else "") +
-                    (if(onions) "\nOnions" else "") +
-                    (if(salads) "\nSalads" else "")
+        val btnShowToast = findViewById<Button>(R.id.btnShowToast)
+//        val clToast = findViewById<Layout>(R.id.clToast)
 
-            tvOrder.text = orderString
+        btnShowToast.setOnClickListener {
+//            Toast.makeText(this, "Hi, I'm a toast", Toast.LENGTH_LONG).show()
+
+//            Custom Toast
+//            Toast(this).apply {
+//                duration = Toast.LENGTH_LONG
+//                view = layoutInflater.inflate(R.Layout)
+//            }
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
