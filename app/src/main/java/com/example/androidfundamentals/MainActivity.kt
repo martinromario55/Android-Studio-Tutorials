@@ -17,6 +17,7 @@ import androidx.constraintlayout.widget.Group
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.textfield.TextInputEditText
+import android.content.Intent
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,17 +96,25 @@ class MainActivity : AppCompatActivity() {
 //        }
 
 
-        val btnShowToast = findViewById<Button>(R.id.btnShowToast)
+//        val btnShowToast = findViewById<Button>(R.id.btnShowToast)
 //        val clToast = findViewById<Layout>(R.id.clToast)
 
-        btnShowToast.setOnClickListener {
-//            Toast.makeText(this, "Hi, I'm a toast", Toast.LENGTH_LONG).show()
+//        btnShowToast.setOnClickListener {
+////            Toast.makeText(this, "Hi, I'm a toast", Toast.LENGTH_LONG).show()
+//
+////            Custom Toast
+////            Toast(this).apply {
+////                duration = Toast.LENGTH_LONG
+////                view = layoutInflater.inflate(R.Layout)
+////            }
+//        }
 
-//            Custom Toast
-//            Toast(this).apply {
-//                duration = Toast.LENGTH_LONG
-//                view = layoutInflater.inflate(R.Layout)
-//            }
+        val btnOpenActivity = findViewById<Button>(R.id.btnOpenActivity)
+
+        btnOpenActivity.setOnClickListener {
+            Intent(this, SecondActivity::class.java).also {
+                startActivity(it)
+            }
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
