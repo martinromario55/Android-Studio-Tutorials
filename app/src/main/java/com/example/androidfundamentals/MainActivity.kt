@@ -2,11 +2,15 @@ package com.example.androidfundamentals
 
 import android.os.Bundle
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.Group
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.textfield.TextInputEditText
@@ -58,10 +62,33 @@ class MainActivity : AppCompatActivity() {
 //            tvResult.text = result.toString()
 //        }
 
-        val btnAddImage = findViewById<Button>(R.id.btnAddImage)
-        val ivImage = findViewById<ImageView>(R.id.ivImage)
-        btnAddImage.setOnClickListener {
-            ivImage.setImageResource(R.drawable.puppy)
+//        val btnAddImage = findViewById<Button>(R.id.btnAddImage)
+//        val ivImage = findViewById<ImageView>(R.id.ivImage)
+//        btnAddImage.setOnClickListener {
+//            ivImage.setImageResource(R.drawable.puppy)
+//        }
+
+        val btnOrder = findViewById<Button>(R.id.btnOrder)
+        val rgMeat = findViewById<RadioGroup>(R.id.rgMeat)
+        val cbCheese = findViewById<CheckBox>(R.id.cbCheese)
+        val cbOnions = findViewById<CheckBox>(R.id.cbOnions)
+        val cbSalads = findViewById<CheckBox>(R.id.cbSalads)
+        val tvOrder = findViewById<TextView>(R.id.tvOrder)
+
+        btnOrder.setOnClickListener {
+            val checkedMeatRadioButtonId = rgMeat.checkedRadioButtonId
+            val meat = findViewById<RadioButton>(checkedMeatRadioButtonId)
+            val cheese = cbCheese.isChecked
+            val onions = cbOnions.isChecked
+            val salads = cbSalads.isChecked
+
+            val orderString = "You ordered a burger with: \n" +
+                    "${meat.text}" +
+                    (if(cheese) "\nCheese" else "") +
+                    (if(onions) "\nOnions" else "") +
+                    (if(salads) "\nSalads" else "")
+
+            tvOrder.text = orderString
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
