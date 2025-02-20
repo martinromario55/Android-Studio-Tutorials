@@ -109,10 +109,29 @@ class MainActivity : AppCompatActivity() {
 ////            }
 //        }
 
-        val btnOpenActivity = findViewById<Button>(R.id.btnOpenActivity)
+//        val btnOpenActivity = findViewById<Button>(R.id.btnOpenActivity)
+//
+//        btnOpenActivity.setOnClickListener {
+//            Intent(this, SecondActivity::class.java).also {
+//                startActivity(it)
+//            }
+//        }
 
-        btnOpenActivity.setOnClickListener {
+
+        val btnApply = findViewById<Button>(R.id.btnApply)
+        val etName = findViewById<EditText>(R.id.etName)
+        val etAge = findViewById<EditText>(R.id.etAge)
+        val etCountry = findViewById<EditText>(R.id.etCountry)
+
+        btnApply.setOnClickListener {
+            val name = etName.text.toString()
+            val age = etAge.text.toString().toInt()
+            val country = etCountry.text.toString()
+
             Intent(this, SecondActivity::class.java).also {
+                it.putExtra("EXTRA_NAME", name)
+                it.putExtra("EXTRA_AGE", age)
+                it.putExtra("EXTRA_COUNTRY", country)
                 startActivity(it)
             }
         }
