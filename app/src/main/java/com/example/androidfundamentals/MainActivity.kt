@@ -1,5 +1,7 @@
 package com.example.androidfundamentals
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.Button
@@ -18,8 +20,15 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.textfield.TextInputEditText
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
 
 class MainActivity : AppCompatActivity() {
+    @SuppressLint("NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -118,23 +127,30 @@ class MainActivity : AppCompatActivity() {
 //        }
 
 
-        val btnApply = findViewById<Button>(R.id.btnApply)
-        val etName = findViewById<EditText>(R.id.etName)
-        val etAge = findViewById<EditText>(R.id.etAge)
-        val etCountry = findViewById<EditText>(R.id.etCountry)
+//        val btnApply = findViewById<Button>(R.id.btnApply)
+//        val etName = findViewById<EditText>(R.id.etName)
+//        val etAge = findViewById<EditText>(R.id.etAge)
+//        val etCountry = findViewById<EditText>(R.id.etCountry)
+//
+//        btnApply.setOnClickListener {
+//            val name = etName.text.toString()
+//            val age = etAge.text.toString().toInt()
+//            val country = etCountry.text.toString()
+//
+//            Intent(this, SecondActivity::class.java).also {
+//                it.putExtra("EXTRA_NAME", name)
+//                it.putExtra("EXTRA_AGE", age)
+//                it.putExtra("EXTRA_COUNTRY", country)
+//                startActivity(it)
+//            }
+//        }
 
-        btnApply.setOnClickListener {
-            val name = etName.text.toString()
-            val age = etAge.text.toString().toInt()
-            val country = etCountry.text.toString()
 
-            Intent(this, SecondActivity::class.java).also {
-                it.putExtra("EXTRA_NAME", name)
-                it.putExtra("EXTRA_AGE", age)
-                it.putExtra("EXTRA_COUNTRY", country)
-                startActivity(it)
-            }
+        val btnRequestPermissions = findViewById<Button>(R.id.btnRequestPermissions)
+        btnRequestPermissions.setOnClickListener {
+            requestPermissions()
         }
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -143,5 +159,121 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private companion object {
+        const val PERMISSION_REQUEST_CODE = 100
+        const val BACKGROUND_LOCATION_REQUEST_CODE = 101
+    }
+
+    private fun requestPermissions() {
+        val permissionsToRequest = mutableListOf<String>()
+
+        // Check storage permission
+        if (!hasWriteExternalStoragePermission()) {
+            permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
+
+        // Check foreground location permission
+        if (!hasLocationForegroundPermission()) {
+            permissionsToRequest.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+        }
+
+        if (permissionsToRequest.isNotEmpty()) {
+            // First request foreground permissions
+            ActivityCompat.requestPermissions(
+                this,
+                permissionsToRequest.toTypedArray(),
+                PERMISSION_REQUEST_CODE
+            )
+        } else {
+            // If foreground permissions are granted, check for background location
+            requestBackgroundLocationPermission()
+        }
+    }
+
+    private fun requestBackgroundLocationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (hasLocationForegroundPermission() && !hasLocationBackgroundPermission()) {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
+                    // Show explanation to the user why you need background location
+                    showBackgroundLocationRationale()
+                } else {
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+                        BACKGROUND_LOCATION_REQUEST_CODE
+                    )
+                }
+            }
+        }
+    }
+
+    private fun showBackgroundLocationRationale() {
+        AlertDialog.Builder(this)
+            .setTitle("Background Location Permission")
+            .setMessage("We need background location access to provide continuous location updates even when the app is in background.")
+            .setPositiveButton("Grant") { _, _ ->
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+                    BACKGROUND_LOCATION_REQUEST_CODE
+                )
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        when (requestCode) {
+            PERMISSION_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty()) {
+                    for (i in permissions.indices) {
+                        if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                            Log.d("PermissionRequest", "${permissions[i]} granted")
+
+                            // If foreground location was just granted, request background
+                            if (permissions[i] == Manifest.permission.ACCESS_COARSE_LOCATION) {
+                                requestBackgroundLocationPermission()
+                            }
+                        } else {
+                            Log.d("PermissionRequest", "${permissions[i]} denied")
+                        }
+                    }
+                }
+            }
+            BACKGROUND_LOCATION_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("PermissionRequest", "Background location granted")
+                } else {
+                    Log.d("PermissionRequest", "Background location denied")
+                }
+            }
+        }
+    }
+
+    // Your existing permission check functions remain the same
+    private fun hasWriteExternalStoragePermission() =
+        ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+
+    private fun hasLocationForegroundPermission() =
+        ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun hasLocationBackgroundPermission() =
+        ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
 
 }
