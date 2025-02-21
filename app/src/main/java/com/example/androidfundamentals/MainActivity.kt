@@ -23,6 +23,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -146,134 +148,26 @@ class MainActivity : AppCompatActivity() {
 //        }
 
 
-        val btnRequestPermissions = findViewById<Button>(R.id.btnRequestPermissions)
-        btnRequestPermissions.setOnClickListener {
-            requestPermissions()
-        }
-
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+//            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+//            insets
+//        }
     }
 
-    private companion object {
-        const val PERMISSION_REQUEST_CODE = 100
-        const val BACKGROUND_LOCATION_REQUEST_CODE = 101
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.app_menu_bar, menu)
+        return true
     }
 
-    private fun requestPermissions() {
-        val permissionsToRequest = mutableListOf<String>()
-
-        // Check storage permission
-        if (!hasWriteExternalStoragePermission()) {
-            permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.miAddContact -> Toast.makeText(this, "You clicked on Add Contact", Toast.LENGTH_SHORT).show()
+            R.id.miClose -> finish()
+            R.id.miFeedback -> Toast.makeText(this, "You clicked on Feedback", Toast.LENGTH_SHORT).show()
+            R.id.miSettings -> Toast.makeText(this, "You clicked on Settings", Toast.LENGTH_SHORT).show()
+            R.id.miFavorites -> Toast.makeText(this, "You clicked on Favorites", Toast.LENGTH_SHORT).show()
         }
-
-        // Check foreground location permission
-        if (!hasLocationForegroundPermission()) {
-            permissionsToRequest.add(Manifest.permission.ACCESS_COARSE_LOCATION)
-        }
-
-        if (permissionsToRequest.isNotEmpty()) {
-            // First request foreground permissions
-            ActivityCompat.requestPermissions(
-                this,
-                permissionsToRequest.toTypedArray(),
-                PERMISSION_REQUEST_CODE
-            )
-        } else {
-            // If foreground permissions are granted, check for background location
-            requestBackgroundLocationPermission()
-        }
+        return true
     }
-
-    private fun requestBackgroundLocationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            if (hasLocationForegroundPermission() && !hasLocationBackgroundPermission()) {
-                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
-                    // Show explanation to the user why you need background location
-                    showBackgroundLocationRationale()
-                } else {
-                    ActivityCompat.requestPermissions(
-                        this,
-                        arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
-                        BACKGROUND_LOCATION_REQUEST_CODE
-                    )
-                }
-            }
-        }
-    }
-
-    private fun showBackgroundLocationRationale() {
-        AlertDialog.Builder(this)
-            .setTitle("Background Location Permission")
-            .setMessage("We need background location access to provide continuous location updates even when the app is in background.")
-            .setPositiveButton("Grant") { _, _ ->
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
-                    BACKGROUND_LOCATION_REQUEST_CODE
-                )
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        when (requestCode) {
-            PERMISSION_REQUEST_CODE -> {
-                if (grantResults.isNotEmpty()) {
-                    for (i in permissions.indices) {
-                        if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                            Log.d("PermissionRequest", "${permissions[i]} granted")
-
-                            // If foreground location was just granted, request background
-                            if (permissions[i] == Manifest.permission.ACCESS_COARSE_LOCATION) {
-                                requestBackgroundLocationPermission()
-                            }
-                        } else {
-                            Log.d("PermissionRequest", "${permissions[i]} denied")
-                        }
-                    }
-                }
-            }
-            BACKGROUND_LOCATION_REQUEST_CODE -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d("PermissionRequest", "Background location granted")
-                } else {
-                    Log.d("PermissionRequest", "Background location denied")
-                }
-            }
-        }
-    }
-
-    // Your existing permission check functions remain the same
-    private fun hasWriteExternalStoragePermission() =
-        ActivityCompat.checkSelfPermission(
-            this,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED
-
-    private fun hasLocationForegroundPermission() =
-        ActivityCompat.checkSelfPermission(
-            this,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-
-    @RequiresApi(Build.VERSION_CODES.Q)
-    private fun hasLocationBackgroundPermission() =
-        ActivityCompat.checkSelfPermission(
-            this,
-            Manifest.permission.ACCESS_BACKGROUND_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-
 }
